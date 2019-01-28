@@ -1,74 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar/flutter_calendar.dart';
 
-main() {
-  runApp(new CalendarViewApp());
-}
+main() => runApp(CalendarViewApp());
 
 class CalendarViewApp extends StatelessWidget {
   void handleNewDate(date) {
-    print("handleNewDate ${date}");
+    print("handleNewDate $date");
   }
 
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
+    return MaterialApp(
       title: 'Flutter Demo',
-      theme: new ThemeData(
+      theme: ThemeData(
         brightness: Brightness.dark,
         primarySwatch: Colors.purple,
       ),
-      home: new Scaffold(
-        appBar: new AppBar(
-          title: new Text('Flutter Calendar'),
-        ),
-        body: new Container(
-          margin: new EdgeInsets.symmetric(
-            horizontal: 5.0,
-            vertical: 10.0,
-          ),
-          child: new ListView(
-            shrinkWrap: true,
-            children: <Widget>[
-              new Text('The Default Calendar:'),
-              new Calendar(
-                onSelectedRangeChange: (range) =>
-                    print("Range is ${range.item1}, ${range.item2}"),
-                onDateSelected: (date) => handleNewDate(date),
-              ),
-              new Divider(
-                height: 50.0,
-              ),
-              new Text('The Expanded Calendar:'),
-              new Calendar(
-                onSelectedRangeChange: (range) =>
-                    print("Range is ${range.item1}, ${range.item2}"),
-                isExpandable: true,
-              ),
-              new Divider(
-                height: 50.0,
-              ),
-              new Text('A Custom Weekly Calendar:'),
-              new Calendar(
-                onSelectedRangeChange: (range) =>
-                    print("Range is ${range.item1}, ${range.item2}"),
-                isExpandable: true,
-                dayBuilder: (BuildContext context, DateTime day) {
-                  return new InkWell(
-                    onTap: () => print("OnTap ${day}"),
-                    child: new Container(
-                      decoration: new BoxDecoration(
-                          border: new Border.all(color: Colors.black38)),
-                      child: new Text(
-                        day.day.toString(),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ],
+      home: Scaffold(
+        appBar: AppBar(title: Text('Flutter Calendar')),
+        body: Container(
+          margin: EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
+          child: Calendar(
+            onSelectedRangeChange: (range) =>
+                print("Range is ${range.item1}, ${range.item2}"),
+            monthView: true,
+            firstDate: DateTime(2019, 1, 28),
+            initialCalendarDateOverride: DateTime.now(),
+            dayBuilder: (context, date) => [
+                  Event(),
+                  Event(),
+                  Event(),
+                  Event(),
+                ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class Event extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(2.0),
+      margin: const EdgeInsets.all(1.0),
+      decoration: BoxDecoration(
+        color: Colors.red,
+        borderRadius: BorderRadius.circular(5.0),
+      ),
+      child: Text(
+        'Example of an event',
+        maxLines: 1,
+        style: TextStyle(fontSize: 11.0),
       ),
     );
   }

@@ -9,12 +9,12 @@ class CalendarTile extends StatelessWidget {
   final bool isSelected;
   final TextStyle dayOfWeekStyles;
   final TextStyle dateStyles;
-  final Widget child;
+  final List<Widget> children;
 
   CalendarTile({
     this.onDateSelected,
     this.date,
-    this.child,
+    this.children,
     this.dateStyles,
     this.dayOfWeek,
     this.dayOfWeekStyles,
@@ -22,48 +22,42 @@ class CalendarTile extends StatelessWidget {
     this.isSelected: false,
   });
 
-  Widget renderDateOrDayOfWeek(BuildContext context) {
-    if (isDayOfWeek) {
-      return new InkWell(
-        child: new Container(
-          alignment: Alignment.center,
-          child: new Text(
-            dayOfWeek,
-            style: dayOfWeekStyles,
-          ),
-        ),
-      );
-    } else {
-      return new InkWell(
-        onTap: onDateSelected,
-        child: new Container(
-          decoration: isSelected
-              ? new BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Theme.of(context).primaryColor,
-                )
-              : new BoxDecoration(),
-          alignment: Alignment.center,
-          child: new Text(
-            Utils.formatDay(date).toString(),
-            style: isSelected ? Theme.of(context).primaryTextTheme.body1 : dateStyles,
-            textAlign: TextAlign.center,
-          ),
-        ),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (child != null) {
-      return new InkWell(
-        child: child,
-        onTap: onDateSelected,
+    if (isDayOfWeek) {
+      return InkWell(
+        child: Container(
+          alignment: Alignment.center,
+          child: Text(dayOfWeek, style: dayOfWeekStyles),
+        ),
       );
     }
-    return new Container(
-      child: renderDateOrDayOfWeek(context),
+    return InkWell(
+      onTap: onDateSelected,
+      child: Container(
+        decoration: isSelected
+            ? BoxDecoration(
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(8.0),
+                color: Theme.of(context).primaryColor,
+              )
+            : null,
+        alignment: Alignment.topCenter,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 5.0),
+            Text(
+              Utils.formatDay(date).toString(),
+              style: isSelected
+                  ? Theme.of(context).primaryTextTheme.body1
+                  : dateStyles,
+              textAlign: TextAlign.start,
+            ),
+            const SizedBox(height: 5.0),
+          ]..addAll(children ?? []),
+        ),
+      ),
     );
   }
 }
