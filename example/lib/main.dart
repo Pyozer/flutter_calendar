@@ -19,10 +19,10 @@ class CalendarViewApp extends StatelessWidget {
       home: Scaffold(
         appBar: AppBar(title: Text('Flutter Calendar')),
         body: Container(
-          margin: EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
+          margin: EdgeInsets.all(8),
           child: Calendar(
-            onSelectedRangeChange: (range) =>
-                print("Range is ${range.item1}, ${range.item2}"),
+            onSelectedRangeChange: (start, end) =>
+                print("Range is $start, $end"),
             monthView: true,
             firstDate: DateTime(2019, 1, 28),
             initialCalendarDateOverride: DateTime.now(),

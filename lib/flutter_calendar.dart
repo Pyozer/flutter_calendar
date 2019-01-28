@@ -1,15 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:tuple/tuple.dart';
 import 'package:flutter_calendar/calendar_tile.dart';
-import 'package:date_utils/date_utils.dart';
+import 'package:flutter_calendar/date_utils.dart';
 
 typedef List<Widget> DayBuilder(BuildContext context, DateTime day);
+typedef void SelectedRangeChanged(DateTime start, DateTime end);
 
 class Calendar extends StatefulWidget {
   final ValueChanged<DateTime> onDateSelected;
-  final ValueChanged<Tuple2<DateTime, DateTime>> onSelectedRangeChange;
+  final SelectedRangeChanged onSelectedRangeChange;
   final bool monthView;
   final DayBuilder dayBuilder;
   final bool showChevronsToChangeRange;
@@ -18,6 +18,8 @@ class Calendar extends StatefulWidget {
   final DateTime initialCalendarDateOverride;
   final DateTime firstDate;
   final DateTime endDate;
+  final bool startMonday;
+  final List<String> weekdays;
 
   Calendar({
     this.onDateSelected,
@@ -30,6 +32,8 @@ class Calendar extends StatefulWidget {
     this.initialCalendarDateOverride,
     this.firstDate,
     this.endDate,
+    this.startMonday = true,
+    this.weekdays = const ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
   });
 
   @override
@@ -49,6 +53,7 @@ class _CalendarState extends State<Calendar> {
     super.initState();
     if (widget.initialCalendarDateOverride != null)
       _selectedDate = widget.initialCalendarDateOverride;
+    Utils.setIsMondayFirstDayOfWeek(widget.startMonday);
     selectedMonthsDays = Utils.daysInMonth(_selectedDate);
     var firstDayOfCurrentWeek = Utils.firstDayOfWeek(_selectedDate);
     var lastDayOfCurrentWeek = Utils.lastDayOfWeek(_selectedDate);
@@ -177,7 +182,7 @@ class _CalendarState extends State<Calendar> {
       children: [
         nameAndIconRow,
         Row(
-          children: Utils.weekdays.map((day) {
+          children: widget.weekdays.map((day) {
             return Expanded(
               child: CalendarTile(isDayOfWeek: true, dayOfWeek: day),
             );
@@ -239,9 +244,8 @@ class _CalendarState extends State<Calendar> {
   }
 
   void updateSelectedRange(DateTime start, DateTime end) {
-    var selectedRange = Tuple2<DateTime, DateTime>(start, end);
     if (widget.onSelectedRangeChange != null) {
-      widget.onSelectedRangeChange(selectedRange);
+      widget.onSelectedRangeChange(start, end);
     }
   }
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:date_utils/date_utils.dart';
+import 'package:flutter_calendar/date_utils.dart';
 
 class CalendarTile extends StatelessWidget {
   final VoidCallback onDateSelected;
@@ -42,7 +42,6 @@ class CalendarTile extends StatelessWidget {
                 color: Theme.of(context).primaryColor,
               )
             : null,
-        alignment: Alignment.topCenter,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -52,10 +51,17 @@ class CalendarTile extends StatelessWidget {
               style: isSelected
                   ? Theme.of(context).primaryTextTheme.body1
                   : dateStyles,
-              textAlign: TextAlign.start,
             ),
             const SizedBox(height: 5.0),
-          ]..addAll(children ?? []),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: children ?? [],
+                ),
+              ),
+            )
+          ],
         ),
       ),
     );
