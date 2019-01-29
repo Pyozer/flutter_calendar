@@ -32,25 +32,25 @@ class CalendarTile extends StatelessWidget {
         ),
       );
     }
+    final borderColor =
+        isSelected ? Theme.of(context).accentColor : Colors.transparent;
+
     return InkWell(
       onTap: onDateSelected,
       child: Container(
-        decoration: isSelected
-            ? BoxDecoration(
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(8.0),
-                color: Theme.of(context).primaryColor,
-              )
-            : null,
+        decoration: BoxDecoration(
+          shape: BoxShape.rectangle,
+          borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(color: borderColor, width: 1.5),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(height: 5.0),
             Text(
-              Utils.formatDay(date).toString(),
-              style: isSelected
-                  ? Theme.of(context).primaryTextTheme.body1
-                  : dateStyles,
+              DateUtils.formatDay(date).toString(),
+              style:
+                  isSelected ? Theme.of(context).textTheme.body1 : dateStyles,
             ),
             const SizedBox(height: 5.0),
             Expanded(
