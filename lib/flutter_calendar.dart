@@ -15,8 +15,8 @@ class Calendar extends StatefulWidget {
   final DayBuilder dayBuilder;
   final bool showChevronsToChangeRange;
   final bool showTodayAction;
-  final bool showCalendarPickerIcon;
-  final DateTime initialCalendarDateOverride;
+  final bool isCalendarPicker;
+  final DateTime initialSelectedDate;
   final DateTime firstDate;
   final DateTime endDate;
   final bool startMonday;
@@ -29,8 +29,8 @@ class Calendar extends StatefulWidget {
     this.dayBuilder,
     this.showTodayAction: true,
     this.showChevronsToChangeRange: true,
-    this.showCalendarPickerIcon: true,
-    this.initialCalendarDateOverride,
+    this.isCalendarPicker: true,
+    this.initialSelectedDate,
     this.firstDate,
     this.endDate,
     this.startMonday = true,
@@ -43,21 +43,24 @@ class Calendar extends StatefulWidget {
 
 class _CalendarState extends State<Calendar> {
   List<DateTime> _calendarDays = [];
-  DateTime _selectedDate = DateTime.now();
+  DateTime _selectedDate;
   String _displayMonth;
 
   @override
   void initState() {
     super.initState();
-    if (widget.initialCalendarDateOverride != null)
-      _selectedDate = widget.initialCalendarDateOverride;
-    DateUtils.setIsMondayFirstDayOfWeek(widget.startMonday);
-    _updateListDays(_selectedDate);
+    _initCalendar();
   }
 
   @override
   void didUpdateWidget(Calendar oldWidget) {
     super.didUpdateWidget(oldWidget);
+    _initCalendar();
+  }
+
+  void _initCalendar() {
+    _selectedDate = widget.initialSelectedDate ?? DateTime.now();
+    DateUtils.setIsMondayFirstDayOfWeek(widget.startMonday);
     _updateListDays(_selectedDate);
   }
 
@@ -104,10 +107,12 @@ class _CalendarState extends State<Calendar> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         leftOuterIcon,
+        Expanded(child: leftInnerIcon ?? const SizedBox.shrink()),
         GestureDetector(
-          onTap: _selectDateFromPicker,
+          onTap: widget.isCalendarPicker ? _selectDateFromPicker : null,
           child: Text(_displayMonth, style: const TextStyle(fontSize: 20.0)),
         ),
+        Expanded(child: const SizedBox.shrink()),
         rightOuterIcon,
       ]..removeWhere((e) => e == null),
     );
@@ -188,6 +193,7 @@ class _CalendarState extends State<Calendar> {
       mainAxisSize: MainAxisSize.min,
       children: [
         nameAndIconRow,
+        const SizedBox(height: 12.0),
         Row(
           children: widget.weekdays.map((day) {
             return Expanded(
