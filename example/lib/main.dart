@@ -5,20 +5,28 @@ import 'package:flutter_calendar/flutter_calendar.dart';
 main() => runApp(CalendarViewApp());
 
 class CalendarViewApp extends StatelessWidget {
-  void handleNewDate(date) {
-    print("handleNewDate $date");
+  DateTime getDate([int days = 0, int minutes = 0]) {
+    return DateTime.now().add(Duration(days: days, minutes: minutes));
   }
-
-  Widget get event => Event();
 
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
     final dates = {
-      now: [event, event],
-      now.add(Duration(days: 4)): [event, event, event],
-      now.add(Duration(days: 7)): [event, event, event, event],
-      now.add(Duration(days: 9)): [event],
+      getDate(): [
+        Event('Event #1', getDate()),
+        Event('Event #2', getDate(0, 3)),
+        Event('Event #2', getDate(0, 5))
+      ],
+      getDate(4): [
+        Event('Event #3', getDate(4)),
+        Event('Event #4', getDate(4, 3))
+      ],
+      getDate(7): [
+        Event('Event #5', getDate(7)),
+        Event('Event #6', getDate(7, 3)),
+        Event('Event #7', getDate(7, 3))
+      ],
+      getDate(9): [Event('Event #8', getDate(9))],
     };
 
     return MaterialApp(
@@ -37,8 +45,12 @@ class CalendarViewApp extends StatelessWidget {
             monthView: false,
             firstDate: DateTime(2019, 1, 28),
             dayBuilder: (context, date) {
-              DateTime key = dates.keys.firstWhere((dateKey) => DateUtils.isSameDay(date, dateKey), orElse: () => null);
-              if (key != null) return dates[key];
+              DateTime key = dates.keys.firstWhere(
+                (dateKey) => DateUtils.isSameDay(date, dateKey),
+                orElse: () => null,
+              );
+              if (key != null)
+                return dates[key].map((e) => DayEvent(event: e)).toList();
               return [];
             },
           ),
@@ -48,7 +60,11 @@ class CalendarViewApp extends StatelessWidget {
   }
 }
 
-class Event extends StatelessWidget {
+class DayEvent extends StatelessWidget {
+  final Event event;
+
+  const DayEvent({Key key, this.event}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -59,10 +75,17 @@ class Event extends StatelessWidget {
         borderRadius: BorderRadius.circular(3.0),
       ),
       child: Text(
-        'Example of an event',
+        event.title,
         maxLines: 1,
         style: const TextStyle(fontSize: 10.0, color: Colors.white),
       ),
     );
   }
+}
+
+class Event {
+  final String title;
+  final DateTime date;
+
+  Event(this.title, this.date);
 }

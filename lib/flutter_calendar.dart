@@ -61,23 +61,24 @@ class _CalendarState extends State<Calendar> {
   void _initCalendar() {
     _selectedDate = widget.initialSelectedDate ?? DateTime.now();
     DateUtils.setIsMondayFirstDayOfWeek(widget.startMonday);
-    _updateListDays(_selectedDate);
+    _updateListDays(_selectedDate, false);
   }
 
-  void _updateListDays(DateTime newDate) {
+  void _updateListDays(DateTime newDate, [bool callback = true]) {
     _selectedDate = newDate;
     if (widget.monthView) {
       _calendarDays = DateUtils.daysInMonth(_selectedDate);
     } else {
       final firstDayOfWeek = DateUtils.firstDayOfWeek(_selectedDate);
       final lastDayOfWeek = DateUtils.lastDayOfWeek(_selectedDate);
-      _calendarDays = DateUtils.daysInRange(firstDayOfWeek, lastDayOfWeek).toList();
+      _calendarDays = DateUtils.daysInRange(
+        firstDayOfWeek,
+        lastDayOfWeek,
+      ).toList();
       _calendarDays = _calendarDays.sublist(0, min(7, _calendarDays.length));
     }
-    setState(() {
-      _displayMonth = DateUtils.formatMonth(_selectedDate);
-    });
-    _updateSelectedRange(_calendarDays.first, _calendarDays.last);
+    setState(() => _displayMonth = DateUtils.formatMonth(_selectedDate));
+    if (callback) _updateSelectedRange(_calendarDays.first, _calendarDays.last);
   }
 
   Widget get nameAndIconRow {
