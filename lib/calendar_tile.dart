@@ -49,13 +49,13 @@ class CalendarTile extends StatelessWidget {
             const SizedBox(height: 5.0),
             Text(
               DateUtils.formatDay(date).toString(),
-              style:
-                  isSelected ? Theme.of(context).textTheme.body1 : dateStyles,
+              style: isSelected ? Theme.of(context).textTheme.body1 : dateStyles,
             ),
             const SizedBox(height: 5.0),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisSize: MainAxisSize.min,
                   children: children ?? [],
                 ),
